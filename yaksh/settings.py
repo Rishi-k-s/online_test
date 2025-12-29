@@ -13,7 +13,8 @@ N_CODE_SERVERS = config('N_CODE_SERVERS', default=5, cast=int)
 SERVER_POOL_PORT = config('SERVER_POOL_PORT', default=55555, cast=int)
 
 # Server host name
-SERVER_HOST_NAME = config('SERVER_HOST_NAME', default='http://localhost')
+SERVER_HOST_NAME = config('SERVER_HOST_NAME', default='http://yaksh_codeserver')
+
 
 # Timeout for the code to run in seconds.  This is an integer!
 SERVER_TIMEOUT = config('SERVER_TIMEOUT', default=4, cast=int)
@@ -58,5 +59,8 @@ code_evaluators = {
     "r": {
         "standardtestcase": "yaksh.r_code_evaluator.RCodeEvaluator",
         "hooktestcase": "yaksh.hook_evaluator.HookEvaluator"
+        },
+    "esp_idf": {
+        "stdiobasedtestcase": "yaksh.esp_idf_stdio_evaluator.EspIdfStdIOEvaluator"
         },
 }

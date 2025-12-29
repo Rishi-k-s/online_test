@@ -65,6 +65,7 @@ languages = (
         ("java", "Java Language"),
         ("scilab", "Scilab"),
         ("r", "R"),
+        ("esp_idf", "ESP-IDF (ESP32)") ,
         ("other", "Other")
     )
 
