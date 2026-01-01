@@ -6,6 +6,7 @@ services:
       dockerfile: Dockerfile_django
     image: yaksh.django
     container_name: yaksh_django
+    # user: "1000:1000"
     volumes:
       - ../.:/Sites/online_test
     depends_on:

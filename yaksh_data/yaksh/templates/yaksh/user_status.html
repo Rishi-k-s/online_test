@@ -1,0 +1,59 @@
+{% if status %}
+    <strong>Student Name: {{student.get_full_name|title}}</strong>
+    <br>
+    <div class="progress-wrapper">
+        <div class="progress-info">
+            <div class="progress-label">
+              <span>Course completed</span>
+            </div>
+            <div class="progress-percentage">
+              <span>
+                {% if course_percentage %} {{course_percentage}} {% else %} 0 {% endif %}%
+              </span>
+            </div>
+        </div>
+        <div class="progress">
+            <div
+                class="progress-bar progress-bar-primary"
+                role="progressbar"
+                aria-valuenow="{{course_percentage}}"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                style="width:{{course_percentage}}%">
+            </div>
+        </div>
+    </div>
+    <br>
+    <strong>Per Module Progress:</strong>
+    <br>
+    <table class="table">
+        {% for module, percent in modules %}
+            <tr>
+                <td>{{ module.name }}</td>
+                <td>
+                    <div class="progress-wrapper">
+                        <div class="progress-info">
+                            <div class="progress-percentage">
+                              <span>
+                                {% if percent %} {{percent}} {% else %} 0 {% endif %}%
+                              </span>
+                            </div>
+                        </div>
+                        <div class="progress">
+                            <div
+                                class="progress-bar progress-bar-primary"
+                                role="progressbar"
+                                aria-valuenow="{{percent}}"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                                style="width:{{percent}}%">
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    {{ msg }}
+{% endif %}

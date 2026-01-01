@@ -19,6 +19,8 @@ fi
 {
 	echo "//file: main.cpp"
 	echo "#include \"Arduino.h\""
+	echo "#include \"esp_log.h\""
+	echo "static const char *TAG = \"APP\";"
 	echo
 	cat "$INO_FILE"
 } > "$TARGET_FILE"
@@ -35,7 +37,6 @@ if [ -z "$IDF_PATH" ]; then
 	fi
 fi
 
-cd "$(dirname "$0")"
 # Build the project
 idf.py build > build.log 2>&1
 
@@ -61,6 +62,8 @@ echo "Now emulating it via QEMU..."
 
 # Finally running it in QEMU
 
+set -e
+
 PATTERN="task_wdt: Task watchdog got triggered"
 TIME_LIMIT=5
 
@@ -83,7 +86,6 @@ sed -n '/uart: queue free spaces/,${
 $d
 p
 }' output.txt > filtered_output.txt
-# echo "" > output.txt
 
 
 wait "$QEMU_PID" 2>/dev/null

@@ -12,8 +12,12 @@ class EspIdfStdIOEvaluator(BaseEvaluator):
     """
     def __init__(self, metadata, test_case_data):
         self.files = []
-        self.script_path = os.path.join(os.path.dirname(__file__), 'arduino_to_esp/ino_to_running.sh')
-        self.output_file = os.path.join(os.path.dirname(__file__), 'arduino_to_esp/filtered_output.txt')
+        # Ensure paths resolve to /Sites/online_test/... inside container
+        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+        yaksh_dir = os.path.join(base_dir, 'yaksh')
+        arduino_to_esp_dir = os.path.join(yaksh_dir, 'arduino_to_esp')
+        self.script_path = os.path.join(arduino_to_esp_dir, 'ino_to_running.sh')
+        self.output_file = os.path.join(arduino_to_esp_dir, 'filtered_output.txt')
         self.timeout = 20  # seconds, can be set from settings if needed
 
         # Set metadata values
@@ -33,7 +37,10 @@ class EspIdfStdIOEvaluator(BaseEvaluator):
 
     def compile_code(self):
         # Write user code to temp .ino file in arduino_to_esp
-        arduino_to_esp_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'arduino_to_esp'))
+        # Use the same arduino_to_esp_dir as above
+        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+        yaksh_dir = os.path.join(base_dir, 'yaksh')
+        arduino_to_esp_dir = os.path.join(yaksh_dir, 'arduino_to_esp')
         ino_file = os.path.join(arduino_to_esp_dir, 'submission.ino')
         with open(ino_file, 'w') as f:
             f.write(self.user_answer)
@@ -48,11 +55,18 @@ class EspIdfStdIOEvaluator(BaseEvaluator):
                 'bash', self.script_path, ino_file
             ], cwd=arduino_to_esp_dir,
                stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=self.timeout)
+            with open(ino_file, 'w') as f:
+                f.write("Ooomfi 1")
         except subprocess.TimeoutExpired:
             self.output_value = ''
+            with open(ino_file, 'w') as f:
+                f.write("Ooomfi 2")
             return False, 'Timeout: Code execution exceeded time limit.'
+        
         except Exception as e:
             self.output_value = ''
+            with open(ino_file, 'w') as f:
+                f.write("Ooomfi 3")
             return False, f'Error running evaluator: {str(e)}'
 
         # Check for build/run errors
@@ -61,6 +75,8 @@ class EspIdfStdIOEvaluator(BaseEvaluator):
             stderr = proc.stderr.decode('utf-8')
             stdout = proc.stdout.decode('utf-8')
             error_msg = "Script failed with exit code {}.\nSTDERR:\n{}\nSTDOUT:\n{}".format(proc.returncode, stderr, stdout)
+            with open(ino_file, 'w') as f:
+                f.write(error_msg)
             return False, error_msg
 
         # Read filtered output

@@ -1,4 +1,15 @@
 //file: main.cpp
 #include "Arduino.h"
+#include "esp_log.h"
+static const char *TAG = "APP";
 
-python $IDF_PATH/tools/idf_tools.py list | grep qemu
+int sensorPin = A0;   // Analog pin where the sensor is connected
+int sensorValue = 0;
+
+void setup() {
+  Serial.begin(9600);    // Start serial communication
+}
+
+void loop() {
+  ESP_LOGI(TAG, "PIN 13, HIGH"); ;                          // Small delay
+}

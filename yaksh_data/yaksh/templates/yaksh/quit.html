@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Quit Quiz {% endblock %}
+
+{% block nav %} 
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+    <a class="navbar-brand" href="{% url 'yaksh:index' %}">
+        <img src="{% static 'yaksh/images/yaksh_banner.png' %}" alt="YAKSH">
+    </a>
+</nav>
+{% endblock %}
+
+{% block content %}
+<center>
+<div class="col-md-8">
+    <h3>Submission Status</h3>
+    <table class="table table-dark table-responsive-sm" >
+        <thead class="thead-dark">
+            <tr>
+                <th> Question</th>
+                <th> Status </th>
+            </tr>
+        </thead>
+        <tbody class="list">
+        {% for question in paper.questions.all %}
+            <tr>
+            {% if question in paper.questions_answered.all %}
+                <td> {{ question.summary }} </td>
+                <td> <span class="badge badge-success">Attempted</span> </td>
+            {% else %}
+                <td> {{ question }} </td>
+                <td> <span class="badge badge-warning">Not Attempted</span> </td>
+            {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+</center>
+
+    {% if paper.question_paper.quiz.is_exercise %}
+	    <center><h4> Are you sure you wish to quit the Exercise?</h4></center>
+    {% else %}
+        <center><h4>Your current answers are saved.</h4></center>
+        <center><h4> Are you sure you wish to quit the exam?</h4></center>
+        <center><h4> Be sure, as you won't be able to restart this exam.</h4></center>
+    {% endif %}
+	<form action="{% url 'yaksh:complete' paper.attempt_number module_id paper.question_paper.id course_id %}" method="post">
+	{% csrf_token %}
+	<center>
+        <button class="btn btn-outline-success btn-lg" type="submit" name="yes">Yes</button>
+        {% if paper.is_special %}
+        <a class="btn btn-outline-danger btn-lg" name="no" href="{% url 'yaksh:skip_question' paper.questions.first.id paper.attempt_number module_id paper.question_paper.id course_id %}">No</a>
+        {% else %}
+        <a class="btn btn-outline-danger btn-lg" name="no" href="{% url 'yaksh:start_quiz' paper.attempt_number module_id paper.question_paper.id course_id %}">No</a>
+        {% endif %}
+    </center>
+	</form>
+    <br><br>
+{% endblock content %}

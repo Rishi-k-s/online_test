@@ -1,0 +1,99 @@
+<div class="container">
+<center><h3>Add Teachers/TAs</h3><br></center>
+<form action="{% url 'yaksh:search_teacher' course.id %}" method="post">
+    {% csrf_token %}
+    <div class="input-group">
+        <input class="form-control form-control-lg" type="text" name="uname" id="inputLarge" placeholder="Search teachers with username, firstname, lastname, email" required>
+        <div class="input-group-append">
+            <button class="btn btn-info btn-lg" type="submit">
+            <i class="fa fa-search"></i>&nbsp;Search
+            </button>
+        </div>
+    </div>
+</form>
+<br><br>
+
+{% if success %}
+    {% if teachers|length == 0 %}
+        <center><h3 class="badge badge-warning">No results found</h3></center>
+    {% else %}
+        <center><b><u>Search Results</u></b></center><br>
+        <center>
+            <p class="alert alert-info">
+                Search results does not include teachers already added
+            </p>
+        </center>
+        <br>
+        <form action="{% url 'yaksh:add_teacher' course.id %}" method="post">
+        {% csrf_token %}
+        <div class="card">
+        {% if teachers|length > 10 %}
+        <div class="table-responsive" style="height: 700px">
+        {% else %}
+        <div class="table-responsive">
+        {% endif %}
+        <table class="table table-responsive-sm table-dark course-detail">
+            <thead class="thead-dark">
+                <tr>
+                <th></th>
+                <th>Username</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Institute</th>
+                <th>Department</th>
+                <th>Position</th>
+                </tr>
+            </thead>
+            <tbody class="list">
+            {% for teacher in teachers %}
+                {% if teacher not in course.get_teachers %}
+                <tr>
+                <td><input type="checkbox" name="check" value="{{ teacher.id }}"></td>
+                <td>{{ teacher.username }}</td>
+                <td>{{ teacher.first_name }}</td>
+                <td>{{ teacher.last_name }}</td>
+                <td>{{ teacher.email }}</td>
+                <td>{{ teacher.profile.institute }}</td>
+                <td>{{ teacher.profile.department }}</td>
+                <td>{{ teacher.profile.position }}</td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        </div>
+        </br>
+        <button class="btn btn-success btn-lg" type="submit">
+            <i class="fa fa-plus-circle"></i>
+            Add Selected
+        </button>
+        </form>
+    {% endif %}
+{% endif %}
+
+
+{% if status %}
+<div class="container">
+    <center><b><u>Teacher(s) added</u></b></center>
+    <br>
+        {% if teachers_added %}
+        <table class="table table-responsive-sm">
+            <tr>
+                <th>Sr No.</th>
+                <th>Name</th>
+            </tr>
+            {% for teacher in teachers_added %}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td>{{ teacher.get_full_name }}</td>
+                </tr>
+            {% endfor %}
+        <table>
+        {% else %}
+            <center><b class="badge badge-info">No Teacher(s)TA(s) Added</b></center>
+        {% endif %}
+</div>
+{% endif %}
+</div>

@@ -260,7 +260,9 @@ def main(args=None):
 
     # Called before serverpool is created so that the multiprocessing
     # can work properly.
-    run_as_nobody()
+    # Only drop privileges if running as root
+    if os.geteuid() == 0:
+        run_as_nobody()
     server_pool = ServerPool(n=options.n, pool_port=options.port)
 
     server_pool.run()

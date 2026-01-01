@@ -1,0 +1,34 @@
+<ul class="pagination pagination">
+    {% if objects.has_previous %}
+    <li class="page-item">
+        <a class="page-link" href="?page=1{% if request.GET.question_type %}&question_type={{ request.GET.question_type }}{% endif %}{% if request.GET.language %}&language={{ request.GET.language }}{% endif %}{% if request.GET.marks %}&marks={{ request.GET.marks }}{% endif %}{% if request.GET.question_tags %}&question_tags={{ request.GET.question_tags }}{% endif %}
+        {% if request.GET.search_tags %}&search_tags={{ request.GET.search_tags }}{% endif %}{% if request.GET.search_status %}&search_status={{ request.GET.search_status }}{% endif %}{% if request.GET.search_post %}&search_post={{ request.GET.search_post }}{% endif %}" aria-label="Previous">
+            <span aria-hidden="true">
+                <i class="fa fa-angle-double-left"></i>
+            </span>
+            <span class="sr-only">begin</span>
+        </a>
+    </li>
+    {% endif %}
+
+    {% for n in objects.paginator.page_range %}
+        {% if objects.number == n %}
+            <li class="page-item active">
+                <span class="page-link">{{ n }}<span class="sr-only">(current)</span></span>
+            </li>
+        {% elif n > objects.number|add:'-5' and n < objects.number|add:'5' %}
+            <li class="page-item"><a class="page-link" href="?page={{ n }}{% if request.GET.question_type %}&question_type={{ request.GET.question_type }}{% endif %}{% if request.GET.language %}&language={{ request.GET.language }}{% endif %}{% if request.GET.marks %}&marks={{ request.GET.marks }}{% endif %}{% if request.GET.question_tags %}&question_tags={{ request.GET.question_tags }}{% endif %}{% if request.GET.search_tags %}&search_tags={{ request.GET.search_tags }}{% endif %}{% if request.GET.search_status %}&search_status={{ request.GET.search_status }}{% endif %}{% if request.GET.search_post %}&search_post={{ request.GET.search_post }}{% endif %}">{{ n }}</a></li>
+        {% endif %}
+    {% endfor %}
+
+    {% if objects.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ objects.paginator.num_pages }}{% if request.GET.question_type %}&question_type={{ request.GET.question_type }}{% endif %}{% if request.GET.language %}&language={{ request.GET.language }}{% endif %}{% if request.GET.marks %}&marks={{ request.GET.marks }}{% endif %}{% if request.GET.question_tags %}&question_tags={{ request.GET.question_tags }}{% endif %}{% if request.GET.search_tags %}&search_tags={{ request.GET.search_tags }}{% endif %}{% if request.GET.search_status %}&search_status={{ request.GET.search_status }}{% endif %}{% if request.GET.search_post %}&search_post={{ request.GET.search_post }}{% endif %}" aria-label="Next">
+                <span aria-hidden="true">
+                    <i class="fa fa-angle-double-right"></i>
+                </span>
+                <span class="sr-only">end</span>
+            </a>
+        </li>
+    {% endif %}
+</ul>
