@@ -44,3 +44,4 @@ data/
 _build/
 yaksh/arduino_to_esp/build
 docker/mysql/
+yaksh/arduino_to_esp/.venv

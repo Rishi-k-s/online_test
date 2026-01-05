@@ -3,13 +3,10 @@
 #include "esp_log.h"
 static const char *TAG = "APP";
 
-int sensorPin = A0;   // Analog pin where the sensor is connected
-int sensorValue = 0;
-
 void setup() {
-  Serial.begin(9600);    // Start serial communication
+  Serial.begin(9600);
+  Serial.println("Hello, World!");
 }
 
 void loop() {
-  ESP_LOGI(TAG, "PIN 13, HIGH"); ;                          // Small delay
 }

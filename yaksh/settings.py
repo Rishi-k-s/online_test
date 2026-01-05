@@ -13,7 +13,7 @@ N_CODE_SERVERS = config('N_CODE_SERVERS', default=5, cast=int)
 SERVER_POOL_PORT = config('SERVER_POOL_PORT', default=55555, cast=int)
 
 # Server host name
-SERVER_HOST_NAME = config('SERVER_HOST_NAME', default='http://yaksh_codeserver')
+SERVER_HOST_NAME = config('SERVER_HOST_NAME', default='http://127.0.0.1')
 
 
 # Timeout for the code to run in seconds.  This is an integer!

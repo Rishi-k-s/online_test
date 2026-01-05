@@ -7,6 +7,9 @@ Bootloader binary size 0x6680 bytes. 0x980 bytes (8%) free.
 [2/9] No install step for 'bootloader'
 [3/9] Completed 'bootloader'
 [4/9] Building CXX object esp-idf/main/CMakeFiles/__idf_main.dir/main.cpp.obj
+/home/rishi/online_test/yaksh/arduino_to_esp/main/main.cpp:4:20: warning: 'TAG' defined but not used [-Wunused-variable]
+    4 | static const char *TAG = "APP";
+      |                    ^~~
 [5/9] Linking C static library esp-idf/main/libmain.a
 [6/9] Generating esp-idf/esp_system/ld/sections.ld
 [7/9] Linking CXX executable arduino_to_esp.elf
@@ -17,7 +20,7 @@ Merged 2 ELF sections
 Successfully created esp32 image.
 Generated /home/rishi/online_test/yaksh/arduino_to_esp/build/arduino_to_esp.bin
 [9/9] cd /home/rishi/online_test/yaksh/arduino_to_esp/build/esp-idf/esptool_py && /home/rishi/.espressif/python_env/idf5.5_py3.12_env/bin/python /home/rishi/esp/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 partition --type app /home/rishi/online_test/yaksh/arduino_to_esp/build/partition_table/partition-table.bin /home/rishi/online_test/yaksh/arduino_to_esp/build/arduino_to_esp.bin
-arduino_to_esp.bin binary size 0x3e040 bytes. Smallest app partition is 0x100000 bytes. 0xc1fc0 bytes (76%) free.
+arduino_to_esp.bin binary size 0x3e080 bytes. Smallest app partition is 0x100000 bytes. 0xc1f80 bytes (76%) free.
 
 Project build complete. To flash, run:
  idf.py flash
@@ -27,5 +30,3 @@ or
  python -m esptool --chip esp32 -b 460800 --before default_reset --after hard_reset write_flash --flash_mode dio --flash_size 2MB --flash_freq 40m 0x1000 build/bootloader/bootloader.bin 0x8000 build/partition_table/partition-table.bin 0x10000 build/arduino_to_esp.bin
 or from the "/home/rishi/online_test/yaksh/arduino_to_esp/build" directory
  python -m esptool --chip esp32 -b 460800 --before default_reset --after hard_reset write_flash "@flash_args"
-esptool.py v4.10.0
-Wrote 0x4e040 bytes to file build/flash_image.bin, ready to flash to offset 0x0

@@ -11,17 +11,30 @@ run as many servers as desired.
 """
 
 # Standard library imports
+# Standard library imports
 from __future__ import unicode_literals
+
+import sys
+import multiprocessing as mp
+
+# IMPORTANT: must be done BEFORE any other multiprocessing usage
+mp.set_start_method("fork", force=True)
+
+# Preload multiprocessing internals BEFORE Yaksh touches sys.path
+import multiprocessing.managers
+import multiprocessing.popen_fork
+
 from argparse import ArgumentParser
 import json
 from multiprocessing import Process, Queue, Manager
 import os
 from os.path import dirname, abspath
+
 try:
     import pwd
 except ImportError:
     pass
-import sys
+
 import time
 
 # Library imports
@@ -30,12 +43,13 @@ from tornado.ioloop import IOLoop
 from tornado.web import Application, RequestHandler
 import urllib
 
-# Local imports
+# Local imports (must come AFTER multiprocessing is stabilised)
 from .settings import N_CODE_SERVERS, SERVER_POOL_PORT
 from .grader import Grader
 
 
 MY_DIR = abspath(dirname(__file__))
+
 
 
 # Private Protocol ##########

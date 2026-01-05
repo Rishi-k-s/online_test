@@ -1,13 +1,10 @@
+int sensorPin = A0;   // Analog pin where the sensor is connected
+int sensorValue = 0;
+
 void setup() {
-  Serial.begin(9600);
-
-  char name[] = {'I', 'T', 'W', 'O', 'R', 'M', 'I'};
-
-  for (int i = 0; i < 7; i++) {
-    Serial.println(name[i]);
-  }
+  Serial.begin(9600);    // Start serial communication
 }
 
 void loop() {
-    delay(1000);
+  digitalWrite(13,HIGH) ;                          // Small delay
 }

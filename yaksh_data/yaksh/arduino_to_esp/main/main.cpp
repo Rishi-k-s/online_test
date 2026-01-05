@@ -1,8 +1,15 @@
 //file: main.cpp
 #include "Arduino.h"
+#include "esp_log.h"
+static const char *TAG = "APP";
 
-roc.stdout.decode('utf-8')
-            error_msg = "Script failed with exit code {}.\nSTDERR:\n{}\nSTDOUT:\n{}".format(proc.returncode, stderr, stdout)
-            with open(ino_file, 'w') as f:
-                f.write(error_msg)
-            return False, error_msg
+int sensorPin = A0;   // Analog pin where the sensor is connected
+int sensorValue = 0;
+
+void setup() {
+  Serial.begin(9600);    // Start serial communication
+}
+
+void loop() {
+  ESP_LOGI(TAG, "PIN 13, HIGH"); ;                          // Small delay
+}
