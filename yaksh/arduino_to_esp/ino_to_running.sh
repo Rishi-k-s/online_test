@@ -62,30 +62,67 @@ echo "Now emulating it via QEMU..."
 
 # Finally running it in QEMU
 
-set -e
+set +e  # Don't exit on error, we need to handle QEMU cleanup properly
 
 PATTERN="task_wdt: Task watchdog got triggered"
-TIME_LIMIT=5
+TIME_LIMIT=15  # Increased from 5 to 15 seconds for QEMU startup and execution
 
+echo "[QEMU] Starting QEMU emulation with ${TIME_LIMIT}s timeout..."
+echo "[QEMU] Flash image: $(pwd)/build/flash_image.bin"
+
+# Clear output file before starting
+> output.txt
+
+# Run QEMU with timeout, capturing both stdout and stderr
 timeout "${TIME_LIMIT}s" qemu-system-xtensa -nographic -machine esp32 \
   -drive file=build/flash_image.bin,if=mtd,format=raw \
   > output.txt 2>&1 &
 
 QEMU_PID=$!
-echo "QEMU PID (timeout wrapper): $QEMU_PID"
+echo "[QEMU] QEMU started with PID: $QEMU_PID"
 
+# Wait a moment for QEMU to produce output
+sleep 1
+
+if [ -f output.txt ]; then
+  OUTPUT_SIZE=$(wc -c < output.txt)
+  echo "[QEMU] Output file size: $OUTPUT_SIZE bytes"
+fi
+
+# Monitor QEMU output in real-time
 while read -r line; do
   if [[ "$line" == *"$PATTERN"* ]]; then
-    echo "Watchdog triggered, stopping QEMU"
-    kill "$QEMU_PID"
+    echo "[QEMU] Watchdog pattern detected, stopping QEMU"
+    kill "$QEMU_PID" 2>/dev/null
     break
   fi
-done < <(tail --pid="$QEMU_PID" -Fn0 output.txt)
+done < <(tail --pid="$QEMU_PID" -Fn0 output.txt 2>/dev/null)
+
+echo "[QEMU] Waiting for QEMU process to finish..."
+wait "$QEMU_PID" 2>/dev/null
+
+# Check final output
+if [ -f output.txt ]; then
+  FINAL_SIZE=$(wc -c < output.txt)
+  echo "[QEMU] Final output size: $FINAL_SIZE bytes"
+  if [ $FINAL_SIZE -eq 0 ]; then
+    echo "[QEMU] WARNING: output.txt is empty!"
+  fi
+else
+  echo "[QEMU] ERROR: output.txt not created!"
+fi
+
+set -e
+
+# Filter output
+echo "[QEMU] Filtering QEMU output..."
 sed -n '/uart: queue free spaces/,${
 /uart: queue free spaces/d
 $d
 p
 }' output.txt > filtered_output.txt
 
+FILTERED_SIZE=$(wc -c < filtered_output.txt 2>/dev/null || echo "0")
+echo "[QEMU] Filtered output size: $FILTERED_SIZE bytes"
 
-wait "$QEMU_PID" 2>/dev/null
+echo "[QEMU] QEMU emulation completed"

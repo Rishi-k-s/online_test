@@ -30,3 +30,5 @@ or
  python -m esptool --chip esp32 -b 460800 --before default_reset --after hard_reset write_flash --flash_mode dio --flash_size 2MB --flash_freq 40m 0x1000 build/bootloader/bootloader.bin 0x8000 build/partition_table/partition-table.bin 0x10000 build/arduino_to_esp.bin
 or from the "/home/rishi/online_test/yaksh/arduino_to_esp/build" directory
  python -m esptool --chip esp32 -b 460800 --before default_reset --after hard_reset write_flash "@flash_args"
+esptool.py v4.10.0
+Wrote 0x4e080 bytes to file build/flash_image.bin, ready to flash to offset 0x0
