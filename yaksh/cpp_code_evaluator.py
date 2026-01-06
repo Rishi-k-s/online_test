@@ -70,6 +70,17 @@ class CppCodeEvaluator(BaseEvaluator):
             self.write_to_submit_code_file(self.submit_code_path,
                                            self.user_answer)
             self.write_to_submit_code_file(self.test_code_path, self.test_case)
+            # Adding Block: Arduino(.ino) to cpp conversion
+            if self.file_paths:
+                for path in self.file_paths:
+                    if path.endswith('.ino'):
+                        ino_path = path
+                        cpp_path = ino_path.replace('.ino', '.cpp')
+                        converted_script = os.path.join(os.path.dirname(__file__),'..','scripts','converetr_ino_cpp.sh')
+                        subprocess.check_call([converter_script, ino_path,cpp_path])
+                        self.submit_code_path = cpp_path 
+            # block ends
+            
             clean_ref_code_path = self.test_code_path
             if self.file_paths:
                 self.files = copy_files(self.file_paths)
