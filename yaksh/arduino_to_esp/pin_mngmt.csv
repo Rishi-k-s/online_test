@@ -1,1 +1,2 @@
-analogRead, A0
+pin_type,pin_number
+analogRead,A0

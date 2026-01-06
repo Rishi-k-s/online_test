@@ -154,6 +154,8 @@ def main():
     # Check CSV for function/pin presence
     with open(csv_file, newline='') as csvfile:
         reader = csv.reader(csvfile)
+        # Skip header row (pin_type, pin_number)
+        next(reader, None)
         for row in reader:
             if len(row) < 2:
                 continue
