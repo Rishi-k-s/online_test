@@ -25,6 +25,50 @@ fi
 	cat "$INO_FILE"
 } > "$TARGET_FILE"
 
+# ===== STEP 1: Run pin validation and instrumentation =====
+echo "[VALIDATION] Running pin validation and code instrumentation..."
+SCRIPT_DIR="$(dirname "$0")"
+INSTRUMENTED_INO="$SCRIPT_DIR/instrumented.ino"
+VALIDATION_LOG="$SCRIPT_DIR/validation_errors.txt"
+
+# Temporarily disable set -e for venv handling
+set +e
+
+# Activate venv and run main.py
+if [ -f "$SCRIPT_DIR/.venv/bin/activate" ]; then
+	. "$SCRIPT_DIR/.venv/bin/activate"
+	python "$SCRIPT_DIR/main.py" "$INO_FILE" "$INSTRUMENTED_INO" "$SCRIPT_DIR/pin_mngmt.csv" > "$VALIDATION_LOG" 2>&1
+	VALIDATION_EXIT=$?
+	deactivate 2>/dev/null || true
+else
+	# If venv doesn't exist, run with current Python
+	python "$SCRIPT_DIR/main.py" "$INO_FILE" "$INSTRUMENTED_INO" "$SCRIPT_DIR/pin_mngmt.csv" > "$VALIDATION_LOG" 2>&1
+	VALIDATION_EXIT=$?
+fi
+
+# Re-enable set -e
+set -e
+
+# Always display validation output
+echo "[VALIDATION] Results:"
+cat "$VALIDATION_LOG"
+
+# If validation failed, stop here
+if [ $VALIDATION_EXIT -ne 0 ]; then
+	exit 1
+fi
+
+# Update TARGET_FILE to use instrumented code
+{
+	echo "//file: main.cpp"
+	echo "#include \"Arduino.h\""
+	echo "#include \"esp_log.h\""
+	echo "static const char *TAG = \"APP\";"
+	echo
+	cat "$INSTRUMENTED_INO"
+} > "$TARGET_FILE"
+
+# ===== STEP 2: Build the project =====
 # Import ESP-IDF environment
 if [ -z "$IDF_PATH" ]; then
 	if [ -f "$HOME/esp/esp-idf/export.sh" ]; then
@@ -36,6 +80,10 @@ if [ -z "$IDF_PATH" ]; then
 		exit 3
 	fi
 fi
+
+# Clean build directory to avoid stale CMake cache
+# echo "[BUILD] Cleaning build directory..."
+# rm -rf build/
 
 # Build the project
 idf.py build > build.log 2>&1
