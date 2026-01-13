@@ -82,9 +82,9 @@ class CppCodeEvaluator(BaseEvaluator):
                     base = os.path.splittext(f)[0]
                     cpp_file = base + '.cpp'
             
-                    subprocess.check_call([converter_script, f ,cpp_path])
+                    subprocess.check_call([converted_script, f ,cpp_file])
                     os.remove(f)
-                    self.submit_code_path = cpp_path 
+                    self.submit_code_path = cpp_file
             # block ends
             if not isfile(clean_ref_code_path):
                 msg = "No file at %s or Incorrect path" % clean_ref_code_path
