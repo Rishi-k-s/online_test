@@ -1,2 +1,2 @@
-pin_type,pin_number
-analogRead,A0
+Pin, number
+digitalWrite, 10

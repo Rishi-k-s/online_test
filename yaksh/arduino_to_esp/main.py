@@ -152,6 +152,7 @@ def main():
     print(f"[OK] Written instrumented file: {output_file}")
 
     # Check CSV for function/pin presence
+    validation_failed = False
     with open(csv_file, newline='') as csvfile:
         reader = csv.reader(csvfile)
         # Skip header row (pin_type, pin_number)
@@ -188,8 +189,14 @@ def main():
                 print(f"[FOUND] {func}({pin}) is present in the code.")
             elif pins_used:
                 print(f"[PRESENT] {func} is used, but with different pin(s): {', '.join(sorted(pins_used))}")
+                validation_failed = True
             else:
                 print(f"[MISSING] {func}({pin}) is NOT present in the code.")
+                validation_failed = True
+    
+    # Exit with error if validation failed
+    if validation_failed:
+        sys.exit(1)
 
 
 if __name__ == "__main__":

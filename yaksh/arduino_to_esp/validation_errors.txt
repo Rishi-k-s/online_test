@@ -1,0 +1,2 @@
+[OK] Written instrumented file: /home/rishi/online_test/yaksh/arduino_to_esp/instrumented.ino
+[FOUND] digitalWrite(10) is present in the code.

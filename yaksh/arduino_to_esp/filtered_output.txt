@@ -1,2 +1,0 @@
-Hello, W!
-E (6726) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:

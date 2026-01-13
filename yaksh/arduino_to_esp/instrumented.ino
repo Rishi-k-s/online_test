@@ -1,8 +1,3 @@
-//file: main.cpp
-#include "Arduino.h"
-#include "esp_log.h"
-static const char *TAG = "APP";
-
 void setup() {
   pinMode(10, OUTPUT        // Set pin 13 as output
   ESP_LOGI(TAG, "PIN 10, HIGH");;    // Turn ON LED on pin 13

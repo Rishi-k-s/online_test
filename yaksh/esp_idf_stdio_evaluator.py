@@ -64,6 +64,18 @@ class EspIdfStdIOEvaluator(BaseEvaluator):
             self.output_value = ''
             return False, error_msg
 
+        # Write pin requirements CSV from expected_input (if provided)
+        pin_csv_file = os.path.join(arduino_to_esp_dir, 'pin_mngmt.csv')
+        if self.expected_input:
+            try:
+                with open(pin_csv_file, 'w') as f:
+                    f.write(self.expected_input)
+                logger.info(f"[ESP-IDF Eval] Pin requirements CSV written to {pin_csv_file}")
+            except Exception as e:
+                logger.warning(f"[ESP-IDF Eval] Could not write pin CSV: {str(e)}")
+        else:
+            logger.warning(f"[ESP-IDF Eval] No expected_input provided. Using default pin requirements.")
+
         # Remove previous output files
         for output_file in [self.output_file, self.raw_output_file]:
             if os.path.exists(output_file):
@@ -115,6 +127,15 @@ class EspIdfStdIOEvaluator(BaseEvaluator):
             self.output_value = ''
             stderr = proc.stderr.decode('utf-8') if proc.stderr else ""
             stdout = proc.stdout.decode('utf-8') if proc.stdout else ""
+            
+            # Check if this is a validation error
+            validation_error = self._extract_validation_error(stdout)
+            if validation_error:
+                # Show only the validation error, not the verbose output
+                logger.error(f"[ESP-IDF Eval] Validation failed: {validation_error}")
+                self.diagnostic_info = validation_error
+                self.compile_error = validation_error
+                return False, validation_error
             
             # Try to read and filter build.log for more details
             build_log_content = ""
@@ -316,3 +337,22 @@ class EspIdfStdIOEvaluator(BaseEvaluator):
                 filtered.append(line)
         
         return '\n'.join(filtered).strip()
+    
+    def _extract_validation_error(self, stdout):
+        """Extract validation error messages from script stdout"""
+        if not stdout:
+            return None
+        
+        lines = stdout.split('\n')
+        validation_errors = []
+        
+        # Look for validation error lines: [MISSING], [PRESENT], etc.
+        for line in lines:
+            line = line.strip()
+            if line.startswith('[MISSING]') or line.startswith('[PRESENT]'):
+                validation_errors.append(line)
+        
+        if validation_errors:
+            return '\n'.join(validation_errors)
+        
+        return None
